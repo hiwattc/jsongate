@@ -1,2 +1,24 @@
+#윈도우 cmd
 curl -X POST -H "Content-Type:application/json" -d "{\"hostname\":\"staroot03\",\"ip\":\"192.168.56.23\",\"cmd\":\"uptime\",\"result\":\"100d\"}" http://localhost:8080/server/send
+
+#linux terminal or git bash
+curl -X POST -H "Content-Type:application/json" -d '{"hostname":"staroot03","ip":"192.168.56.23","cmd":"uptime","result":"100d"}' http://localhost:8080/server/send
+
+curl -X POST -H "Content-Type:application/json" \
+-d '{ 
+"id":"rpt_tomcat_22",
+"hostname":"staroot03",
+"ip":"192.168.56.23",
+"lang":"jdk1.8.184",
+"os":"Centos7.9",
+"was":"Tomcat9.0.83",
+"domain":"rpt.staroot.com",
+"uri":"http://192.168.56.23:8080",
+"uptime":"99",
+"lastlog":"2024-01-29"
+}' \
+http://localhost:8080/was/send
+
+
+#h2 console
 http://localhost:8080/h2-console
