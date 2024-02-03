@@ -1,0 +1,17 @@
+hr.posco-steel.com
+csp.posco-steel.com
+cp.posco-steel.com
+sm.posco-steel.com
+is.posco-steel.com
+epp.posco-steel.com
+hs.posco-steel.com
+rpt.posco-steel.com
+standard.posco-steel.com
+visit.posco-steel.com
+secu.posco-steel.com
+vm.posco-steel.com
+m10lm.posco-steel.com
+myit.posco-steel.com
+occsweb.posco-steel.com
+confweb.posco-steel.com
+powerbi.posco-steel.com
