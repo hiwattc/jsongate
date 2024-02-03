@@ -1,8 +1,8 @@
 #윈도우 cmd
-curl -X POST -H "Content-Type:application/json" -d "{\"hostname\":\"staroot03\",\"ip\":\"192.168.56.23\",\"cmd\":\"uptime\",\"result\":\"100d\"}" http://localhost:8080/server/send
+curl -X POST -H "Content-Type:application/json" -d "{\"hostname\":\"staroot03\",\"ip\":\"192.168.56.23\",\"cmd\":\"uptime\",\"result\":\"100d\"}" http://localhost:8080/api/server/send
 
 #linux terminal or git bash
-curl -X POST -H "Content-Type:application/json" -d '{"hostname":"staroot03","ip":"192.168.56.23","cmd":"uptime","result":"100d"}' http://localhost:8080/server/send
+curl -X POST -H "Content-Type:application/json" -d '{"hostname":"staroot03","ip":"192.168.56.23","cmd":"uptime","result":"100d"}' http://localhost:8080/api/server/send
 
 curl -X POST -H "Content-Type:application/json" \
 -d '{ 
@@ -17,8 +17,11 @@ curl -X POST -H "Content-Type:application/json" \
 "uptime":"99",
 "lastlog":"2024-01-29"
 }' \
-http://localhost:8080/was/send
+http://localhost:8080/api/was/send
 
 
 #h2 console
 http://localhost:8080/h2-console
+
+#swagger-ui
+http://localhost:8080/swagger-ui/

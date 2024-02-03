@@ -1,4 +1,4 @@
-package com.staroot.collector;
+package com.staroot.collector.dao;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

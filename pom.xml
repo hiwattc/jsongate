@@ -52,6 +52,39 @@
 			<artifactId>javax.mail</artifactId>
 			<version>1.6.2</version>
 		</dependency>
+		<!-- Swagger 관련 의존성 여기부터(1차시도 실패)-->
+		<!--
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		-->
+		<!-- Swagger 관련 의존성 여기까지-->
+		<!-- Swagger 관련 의존성 여기부터(2차시도)-->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>7.0.2.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<!-- Swagger 관련 의존성 여기까지(2차시도)-->
 	</dependencies>
 
 	<build>

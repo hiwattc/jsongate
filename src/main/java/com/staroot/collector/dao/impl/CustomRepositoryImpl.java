@@ -1,13 +1,13 @@
-package com.staroot.collector;
+package com.staroot.collector.dao.impl;
 
+import com.staroot.collector.dao.CustomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 @Repository
 @Qualifier("customRepositoryImpl")
 public class CustomRepositoryImpl implements CustomRepository {

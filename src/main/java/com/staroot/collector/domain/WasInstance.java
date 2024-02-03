@@ -1,4 +1,4 @@
-package com.staroot.collector;
+package com.staroot.collector.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
