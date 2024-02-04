@@ -85,6 +85,17 @@
 			<version>3.0.1</version>
 		</dependency>
 		<!-- Swagger 관련 의존성 여기까지(2차시도)-->
+		<!-- mybatis -->
+		<!-- MyBatis -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

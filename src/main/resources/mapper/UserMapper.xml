@@ -1,0 +1,12 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- UserMapper.xml -->
+<mapper namespace="com.staroot.collector.mapper.UserMapper">
+    <select id="getAllUsers" resultType="com.staroot.collector.domain.User">
+        SELECT * FROM TB_USER;
+    </select>
+    <select id="getAllUsers2" resultType="java.util.Map">
+        SELECT * FROM TB_USER;
+    </select>
+</mapper>
