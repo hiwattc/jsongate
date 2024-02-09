@@ -9,6 +9,9 @@ import com.staroot.collector.domain.WasInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -100,6 +103,7 @@ public class JsonGateController {
         log.info(list.toString());
         return list;
     }
+
     @PostMapping("/was/send")
     public void sendWasInstance(@RequestBody WasInstance wasInstance){
         log.info(wasInstance.toString());

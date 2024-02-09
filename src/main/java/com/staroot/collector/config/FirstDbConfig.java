@@ -43,6 +43,7 @@ public class FirstDbConfig {
         }
 
         // First DB 용 TransactionManager Bean 등록
+    /*
         @Primary
         @Bean(name = "firstDbTransactionManager")
         public DataSourceTransactionManager dataSourceTransactionManager(@Qualifier("firstDataSource") DataSource dataSource) {
@@ -50,4 +51,5 @@ public class FirstDbConfig {
             transactionManager.setDataSource(dataSource);
             return transactionManager;
         }
+     */
     }

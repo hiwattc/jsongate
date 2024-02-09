@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Organization Tree</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div id="tree"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/tree/getData',
+            success: function (data) {
+                var tree = buildTree(data);
+                $('#tree').html(tree);
+            }
+        });
+
+        function buildTree(nodes) {
+            var tree = '<ul>';
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                tree += '<li>' + node.orgNm;
+                if (node.children && node.children.length > 0) {
+                    tree += buildTree(node.children);
+                }
+                tree += '</li>';
+            }
+            tree += '</ul>';
+            return tree;
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>
