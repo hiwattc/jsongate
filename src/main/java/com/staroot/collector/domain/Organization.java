@@ -13,13 +13,16 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Organization {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //private Long id;
 
+    @Id
     private String orgCd;
     private String orgNm;
     private String upOrgCd;
+    private String sq;
+    private String mgrId;
+    private String mgrNm;
 
     // getters and setters
     @Getter

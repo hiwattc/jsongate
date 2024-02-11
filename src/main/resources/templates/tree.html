@@ -3,10 +3,45 @@
 <head>
     <title>Organization Tree</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqtree/1.8.0/jqtree.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqtree/1.8.0/tree.jquery.js"></script>
+    <style>
+        #container {
+            display: flex;
+        }
+        #treeContainer {
+            flex: 1;
+            margin-right: 20px;
+        }
+        #detailsContainer {
+            flex: 1;
+        }
+        .input-container {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<div id="tree"></div>
-
+<a href="/org/makeData">makeData</a>&nbsp;
+<a href="/org/tree">tree</a>&nbsp;
+<button id="saveBtn">Save Changes</button>
+<a href="/tree/getData">getData</a>&nbsp;
+<div id="container">
+    <div id="treeContainer">
+        <div id="tree"></div>
+    </div>
+    <div id="detailsContainer">
+        <h3>Node Details</h3>
+        <p>Name: <label id="nodeNameLabel"></label><input type="text" id="nodeNameInput" class="input-container"></p>
+        <p>ID: <label id="nodeIdLabel"></label><input type="text" id="nodeIdInput" class="input-container"></p>
+        <p>Parent: <label id="parentNodeLabel"></label><input type="text" id="parentNodeInput" class="input-container"></p>
+        <p>SEQ: <label id="sqLabel"></label><input type="text" id="sqInput" class="input-container"></p>
+        <p>ManagerId: <label id="mgrIdLabel"></label><input type="text" id="mgrIdInput" class="input-container"></p>
+        <p>ManagerName: <label id="mgrNmLabel"></label><input type="text" id="mgrNmInput" class="input-container"></p>
+        <button id="editBtn">Edit</button>
+        <button id="saveChangesBtn" class="input-container">Save Changes</button>
+    </div>
+</div>
 <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function () {
@@ -14,26 +49,103 @@
             type: 'GET',
             url: '/tree/getData',
             success: function (data) {
-                var tree = buildTree(data);
-                $('#tree').html(tree);
+                var treeData = buildTreeData(data);
+
+                $('#tree').tree({
+                    data: treeData,
+                    autoOpen: true,
+                    dragAndDrop: true,
+                    closedIcon: '+',
+                    openedIcon: '-'
+                });
             }
         });
 
-        function buildTree(nodes) {
-            var tree = '<ul>';
+        $('#tree').on( 'tree.click', function(e) {
+            var selected_node = e.node;
+            $('#nodeNameLabel').text(selected_node.name);
+            $('#nodeIdLabel').text(selected_node.id);
+            $('#parentNodeLabel').text(selected_node.parent ? selected_node.parent.name : 'None');
+            $('#sqLabel').text(selected_node.sq);
+            $('#mgrIdLabel').text(selected_node.mgrId);
+            $('#mgrNmLabel').text(selected_node.mgrNm);
+
+            $('.input-container').hide(); // 입력 필드 숨기기
+            $('.input-container').prev('label').show(); // 라벨 보이기
+        });
+
+        $('#editBtn').on('click', function() {
+            $('#nodeNameInput').val($('#nodeNameLabel').text());
+            $('#nodeIdInput').val($('#nodeIdLabel').text());
+            $('#parentNodeInput').val($('#parentNodeLabel').text());
+            $('#sqInput').val($('#sqLabel').text());
+            $('#mgrIdInput').val($('#mgrIdLabel').text());
+            $('#mgrNmInput').val($('#mgrNmLabel').text());
+
+            $('.input-container').show(); // 입력 필드 보이기
+            $('.input-container').prev('label').hide(); // 라벨 숨기기
+        });
+
+        $('#saveChangesBtn').on('click', function() {
+            $('#nodeNameLabel').text($('#nodeNameInput').val());
+            $('#nodeIdLabel').text($('#nodeIdInput').val());
+            $('#parentNodeLabel').text($('#parentNodeInput').val());
+            $('#sqLabel').text($('#sqInput').val());
+            $('#mgrIdLabel').text($('#mgrIdInput').val());
+            $('#mgrNmLabel').text($('#mgrNmInput').val());
+
+            var selected_node = $('#tree').tree('getSelectedNode');
+            selected_node.name = $('#nodeNameInput').val();
+            selected_node.id = $('#nodeIdInput').val();
+            selected_node.sq = $('#sqInput').val();
+            selected_node.mgrId = $('#mgrIdInput').val();
+            selected_node.mgrNm = $('#mgrNmInput').val();
+
+            $('.input-container').hide(); // 입력 필드 숨기기
+            $('.input-container').prev('label').show(); // 라벨 보이기
+
+            // 변경 내용 저장
+            $('#saveBtn').click();
+        });
+
+        function buildTreeData(nodes) {
+            var treeData = [];
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
-                tree += '<li>' + node.orgNm;
+                var treeNode = {
+                    name: node.orgNm,
+                    id: node.orgCd,
+                    sq: node.sq,
+                    mgrId: node.mgrId,
+                    mgrNm: node.mgrNm
+                };
                 if (node.children && node.children.length > 0) {
-                    tree += buildTree(node.children);
+                    treeNode.children = buildTreeData(node.children);
                 }
-                tree += '</li>';
+                treeData.push(treeNode);
             }
-            tree += '</ul>';
-            return tree;
+            return treeData;
         }
+
+        $('#saveBtn').click(function () {
+            var modifiedTreeData = $('#tree').tree('toJson');
+            $.ajax({
+                type: 'POST',
+                url: '/tree/save',
+                contentType: 'application/json',
+                data: modifiedTreeData,
+                success: function (response) {
+                    alert('Changes saved successfully!');
+                },
+                error: function () {
+                    alert('Failed to save changes!');
+                }
+            });
+        });
     });
+
     /*]]>*/
 </script>
+
 </body>
 </html>

@@ -19,10 +19,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class OrganizationController {
     private static final Logger log = LoggerFactory.getLogger(OrganizationController.class);
 
+    @Autowired
+    TreeController treeController;
+
     @GetMapping("/tree")
     public String showTree(Model model) {
         log.info("tree called!");
         return "tree";
+    }
+    @GetMapping("/makeData")
+    public String makeSampleData(Model model) {
+        treeController.makeSampleTreeData();
+        return "redirect:/org/tree";
     }
 
 }

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Organization Tree</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqtree/1.8.0/jqtree.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqtree/1.8.0/tree.jquery.js"></script>
+</head>
+<body>
+<a href="/tree/makeData">makeData</a>&nbsp;
+<a href="/tree/getData">getData</a>&nbsp;
+<a href="/org/tree">tree</a>&nbsp;
+<button id="saveBtn">Save Changes</button>
+<div id="tree"></div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/tree/getData',
+            success: function (data) {
+                var treeData = buildTreeData(data);
+
+                $('#tree').tree({
+                    data: treeData,
+                    autoOpen: true,
+                    dragAndDrop: true,
+                    closedIcon: '+',
+                    openedIcon: '-'
+                });
+            }
+        });
+
+        function buildTreeData(nodes) {
+            var treeData = [];
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                var treeNode = {
+                    //label: node.orgNm,
+                    name: node.orgNm,
+                    id: node.orgCd
+                };
+                if (node.children && node.children.length > 0) {
+                    treeNode.children = buildTreeData(node.children);
+                }
+                treeData.push(treeNode);
+            }
+            return treeData;
+        }
+
+        // Save changes button click event
+        $('#saveBtn').click(function () {
+            var modifiedTreeData = $('#tree').tree('toJson');
+            alert("modifiedTreeData ::"+modifiedTreeData);
+
+            // Send modified tree data to server to save changes
+            $.ajax({
+                type: 'POST',
+                url: '/tree/save',
+                contentType: 'application/json',
+                data: modifiedTreeData,
+                success: function (response) {
+                    alert('Changes saved successfully!');
+                },
+                error: function () {
+                    alert('Failed to save changes!');
+                }
+            });
+        });
+    });
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

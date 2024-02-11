@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Organization Tree</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqtree/1.8.0/jqtree.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqtree/1.8.0/tree.jquery.js"></script>
+    <style>
+        #container {
+            display: flex;
+        }
+        #treeContainer {
+            flex: 1;
+            margin-right: 20px;
+        }
+        #detailsContainer {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+<a href="/org/makeData">makeData</a>&nbsp;
+<a href="/org/tree">tree</a>&nbsp;
+<button id="saveBtn">Save Changes</button>
+<a href="/tree/getData">getData</a>&nbsp;
+<div id="container">
+    <div id="treeContainer">
+        <div id="tree"></div>
+    </div>
+    <div id="detailsContainer">
+        <h3>Node Details</h3>
+        <p id="nodeName"></p>
+        <p id="nodeId"></p>
+        <p id="parentNode"></p>
+        <p id="sq"></p>
+        <p id="mgrId"></p>
+        <p id="mgrNm"></p>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/tree/getData',
+            success: function (data) {
+                var treeData = buildTreeData(data);
+
+                $('#tree').tree({
+                    data: treeData,
+                    autoOpen: true,
+                    dragAndDrop: true,
+                    closedIcon: '+',
+                    openedIcon: '-'
+                });
+            }
+        });
+
+        $('#tree').on( 'tree.click', function(e) {
+            //e.preventDefault();
+            var selected_node = e.node;
+            if (selected_node.id === undefined) {
+                console.warn('The multiple selection functions require that nodes have an id');
+            }
+            $('#nodeName').text('Name: ' + selected_node.name);
+            $('#nodeId').text('ID: ' + selected_node.id);
+            $('#parentNode').text('Parent: ' + (selected_node.parent ? selected_node.parent.name : 'None'));
+            $('#sq').text('SEQ: ' + selected_node.sq);
+            $('#mgrId').text('ManagerId: ' + selected_node.mgrId);
+            $('#mgrNm').text('ManagerName: ' + selected_node.mgrNm);
+        });
+
+        // 엔터 키 이벤트를 감지하여 선택된 행을 활성화합니다.
+        $('#tree').on('keydown', function (e) {
+            var key = e.which || e.keyCode;
+            if (key === 13) { // 엔터 키
+                /*
+                var selected_node = e.node;
+                $('#nodeName').text('Name: ' + selected_node.name);
+                $('#nodeId').text('ID: ' + selected_node.id);
+                $('#parentNode').text('Parent: ' + (selected_node.parent ? selected_node.parent.name : 'None'));
+                */
+            }
+        });
+
+
+        function buildTreeData(nodes) {
+            var treeData = [];
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                var treeNode = {
+                    name: node.orgNm,
+                    id: node.orgCd,
+                    sq: node.sq,
+                    mgrId: node.mgrId,
+                    mgrNm: node.mgrNm
+                };
+                if (node.children && node.children.length > 0) {
+                    treeNode.children = buildTreeData(node.children);
+                }
+                treeData.push(treeNode);
+            }
+            return treeData;
+        }
+
+        // Save changes button click event
+        $('#saveBtn').click(function () {
+            var modifiedTreeData = $('#tree').tree('toJson');
+            //alert("modifiedTreeData ::"+modifiedTreeData);
+
+            // Send modified tree data to server to save changes
+            $.ajax({
+                type: 'POST',
+                url: '/tree/save',
+                contentType: 'application/json',
+                data: modifiedTreeData,
+                success: function (response) {
+                    alert('Changes saved successfully!');
+                },
+                error: function () {
+                    alert('Failed to save changes!');
+                }
+            });
+        });
+    });
+
+    /*]]>*/
+</script>
+
+</body>
+</html>
