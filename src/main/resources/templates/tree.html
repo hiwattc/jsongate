@@ -19,6 +19,17 @@
         .input-container {
             display: none;
         }
+
+        .hidden-node {
+            display: none;
+        }
+        .highlight-node > .jqtree-element > .jqtree-title {
+            font-weight: bold;
+        }
+        #search-term {
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -28,6 +39,10 @@
 <a href="/tree/getData">getData</a>&nbsp;
 <div id="container">
     <div id="treeContainer">
+        <div>
+            <input id="search-term" autofocus></input>
+            <button id="search">Search</button>
+            </div>
         <div id="tree"></div>
     </div>
     <div id="detailsContainer">
@@ -35,6 +50,7 @@
         <p>Name: <label id="nodeNameLabel"></label><input type="text" id="nodeNameInput" class="input-container"></p>
         <p>ID: <label id="nodeIdLabel"></label><input type="text" id="nodeIdInput" class="input-container"></p>
         <p>Parent: <label id="parentNodeLabel"></label><input type="text" id="parentNodeInput" class="input-container"></p>
+        <p>UpOrgCd: <label id="upOrgCdLabel"></label><input type="text" id="upOrgCdInput" class="input-container"></p>
         <p>SEQ: <label id="sqLabel"></label><input type="text" id="sqInput" class="input-container"></p>
         <p>ManagerId: <label id="mgrIdLabel"></label><input type="text" id="mgrIdInput" class="input-container"></p>
         <p>ManagerName: <label id="mgrNmLabel"></label><input type="text" id="mgrNmInput" class="input-container"></p>
@@ -56,7 +72,16 @@
                     autoOpen: true,
                     dragAndDrop: true,
                     closedIcon: '+',
-                    openedIcon: '-'
+                    openedIcon: '-',
+                    onCreateLi: (node, $el) => {
+                        if (foundMatch && !node.openForMatch && !node.parent.matches) {
+                            $el.addClass("hidden-node");
+                        }
+
+                        if (node.matches) {
+                            $el.addClass("highlight-node");
+                        }
+                    }
                 });
             }
         });
@@ -66,6 +91,7 @@
             $('#nodeNameLabel').text(selected_node.name);
             $('#nodeIdLabel').text(selected_node.id);
             $('#parentNodeLabel').text(selected_node.parent ? selected_node.parent.name : 'None');
+            $('#upOrgCdLabel').text(selected_node.upOrgCd);
             $('#sqLabel').text(selected_node.sq);
             $('#mgrIdLabel').text(selected_node.mgrId);
             $('#mgrNmLabel').text(selected_node.mgrNm);
@@ -78,6 +104,7 @@
             $('#nodeNameInput').val($('#nodeNameLabel').text());
             $('#nodeIdInput').val($('#nodeIdLabel').text());
             $('#parentNodeInput').val($('#parentNodeLabel').text());
+            $('#upOrgCdInput').val($('#upOrgCdLabel').text());
             $('#sqInput').val($('#sqLabel').text());
             $('#mgrIdInput').val($('#mgrIdLabel').text());
             $('#mgrNmInput').val($('#mgrNmLabel').text());
@@ -90,6 +117,7 @@
             $('#nodeNameLabel').text($('#nodeNameInput').val());
             $('#nodeIdLabel').text($('#nodeIdInput').val());
             $('#parentNodeLabel').text($('#parentNodeInput').val());
+            $('#upOrgCdLabel').text($('#upOrgCdInput').val());
             $('#sqLabel').text($('#sqInput').val());
             $('#mgrIdLabel').text($('#mgrIdInput').val());
             $('#mgrNmLabel').text($('#mgrNmInput').val());
@@ -100,6 +128,7 @@
             selected_node.sq = $('#sqInput').val();
             selected_node.mgrId = $('#mgrIdInput').val();
             selected_node.mgrNm = $('#mgrNmInput').val();
+            selected_node.upOrgCd = $('#upOrgCdInput').val();
 
             $('.input-container').hide(); // 입력 필드 숨기기
             $('.input-container').prev('label').show(); // 라벨 보이기
@@ -117,7 +146,8 @@
                     id: node.orgCd,
                     sq: node.sq,
                     mgrId: node.mgrId,
-                    mgrNm: node.mgrNm
+                    mgrNm: node.mgrNm,
+                    upOrgCd: node.upOrgCd
                 };
                 if (node.children && node.children.length > 0) {
                     treeNode.children = buildTreeData(node.children);
@@ -142,6 +172,57 @@
                 }
             });
         });
+
+
+        const $tree = $("#tree");
+        let foundMatch = false;
+        $("#search").on("click", () => {
+        const searchTerm = $("#search-term").val().toLowerCase();
+        const tree = $tree.tree("getTree");
+
+        if (!searchTerm) {
+            foundMatch = false;
+
+            tree.iterate((node) => {
+                node['openForMatch'] = false;
+                node["matches"] = false;
+                return true;
+            });
+
+            $tree.tree("refresh");
+            return;
+        }
+
+        foundMatch = false;
+
+        tree.iterate((node) => {
+            const matches = node.name.toLowerCase().includes(searchTerm);
+            node["openForMatch"] = matches;
+            node["matches"] = matches;
+
+            if (matches) {
+                foundMatch = true;
+
+                if (node.isFolder()) {
+                    node.is_open = true;
+                }
+
+                let parent = node.parent;
+                while (parent) {
+                    parent["openForMatch"] = true;
+                    parent.is_open = true;
+                    parent = parent.parent;
+                }
+            }
+
+            return true;
+        });
+
+        $tree.tree("refresh");
+    });
+
+
+
     });
 
     /*]]>*/

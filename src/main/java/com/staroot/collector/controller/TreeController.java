@@ -68,6 +68,7 @@ public class TreeController {
             Map<String, Object> orgMap = new HashMap<>();
             orgMap.put("orgCd", organization.getOrgCd());
             orgMap.put("orgNm", organization.getOrgNm());
+            orgMap.put("upOrgCd", organization.getUpOrgCd());
             orgMap.put("sq", organization.getSq());
             orgMap.put("mgrId", organization.getMgrId());
             orgMap.put("mgrNm", organization.getMgrNm());
@@ -178,7 +179,13 @@ public class TreeController {
             organization.setOrgCd(node.get("id").asText());
             //organization.setOrgNm("okok");
             organization.setOrgNm(node.get("name").asText());
-            organization.setUpOrgCd(parent != null ? parent.getOrgCd() : null);
+            if(parent != null){
+                organization.setUpOrgCd(parent.getOrgCd());
+            }else if(node.get("upOrgCd").asText() != null && !"".equals(node.get("upOrgCd").asText())){
+                organization.setUpOrgCd(node.get("upOrgCd").asText());
+            }else{
+                organization.setUpOrgCd(null);
+            }
             organization.setSq(node.get("sq").asText());
             organization.setMgrId(node.get("mgrId").asText());
             organization.setMgrNm(node.get("mgrNm").asText());
