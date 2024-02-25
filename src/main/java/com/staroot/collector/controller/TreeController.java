@@ -47,14 +47,14 @@ public class TreeController {
         for (Organization organization : allOrganizations) {
             log.info(organization.getOrgCd()+"/"+organization.getOrgNm()+"/"+organization.getUpOrgCd());
             String parentOrgCd = organization.getUpOrgCd();
-            if (parentOrgCd != null && !"".equals(parentOrgCd)) {
+            if (parentOrgCd == null || "".equals(parentOrgCd)) {
+                log.info("==================================================ROOT======");
+                rootOrganizations.add(organization); // 상위 조직인 경우 루트로 추가
+            } else {
                 Organization parentOrganization = organizationMap.get(parentOrgCd);
                 if (parentOrganization != null) {
                     parentOrganization.addChild(organization);
                 }
-            } else {
-                log.info("==================================================ROOT======");
-                rootOrganizations.add(organization); // 상위 조직인 경우 루트로 추가
             }
         }
         log.info(rootOrganizations.toString());
@@ -184,7 +184,8 @@ public class TreeController {
             }else if(node.get("upOrgCd").asText() != null && !"".equals(node.get("upOrgCd").asText())){
                 organization.setUpOrgCd(node.get("upOrgCd").asText());
             }else{
-                organization.setUpOrgCd(null);
+                //organization.setUpOrgCd(null);
+                organization.setUpOrgCd("");
             }
             organization.setSq(node.get("sq").asText());
             organization.setMgrId(node.get("mgrId").asText());
